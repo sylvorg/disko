@@ -47,6 +47,12 @@
       description = "Path to mount the dataset to";
     };
 
+    snapshot = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = "The blank snapshot";
+    };
+
     _parent = lib.mkOption {
       internal = true;
       default = parent;
@@ -111,6 +117,10 @@
               } ${config._name}
           ''}
           fi
+          ${lib.optionalString (config.snapshot != null) ''
+            zfs snapshot ${config._name}@${config.snapshot}
+            zfs hold blank ${config._name}@${config.snapshot}
+          ''}
         '';
     };
 
