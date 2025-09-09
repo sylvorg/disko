@@ -29,6 +29,10 @@ in
           { name, ... }@partition:
           {
             options = {
+              enable = lib.mkOption {
+                type = lib.types.bool;
+                default = true;
+              };
               type = lib.mkOption {
                 type =
                   let
@@ -230,6 +234,7 @@ in
       );
       default = { };
       description = "Attrs of partitions to add to the partition table";
+      apply = lib.filterAttrs (n: v: v.enable);
     };
     efiGptPartitionFirst = lib.mkOption {
       type = lib.types.bool;
