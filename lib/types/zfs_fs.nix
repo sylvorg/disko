@@ -9,6 +9,11 @@
 }:
 {
   options = {
+    enable = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+    };
+
     name = lib.mkOption {
       type = lib.types.str;
       default = config._module.args.name;
