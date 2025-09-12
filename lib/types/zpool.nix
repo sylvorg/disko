@@ -19,6 +19,10 @@ let
 in
 {
   options = {
+    enable = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+    };
     name = lib.mkOption {
       type = lib.types.str;
       default = config._module.args.name;
@@ -255,6 +259,7 @@ in
         }
       );
       description = "List of datasets to define";
+      apply = lib.filterAttrs (n: v: v.enable);
     };
     _meta = lib.mkOption {
       internal = true;
@@ -428,7 +433,7 @@ in
     };
   };
 
-  config = {
+  config = lib.mkIf config.enable {
     datasets."__root" = {
       _name = config.name;
       _createFilesystem = false;
