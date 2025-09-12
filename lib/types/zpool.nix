@@ -259,7 +259,7 @@ in
         }
       );
       description = "List of datasets to define";
-      apply = lib.filterAttrs (n: v: v.enable);
+      apply = datasets: if config.enable then (lib.filterAttrs (n: v: v.enable) datasets) else { };
     };
     _meta = lib.mkOption {
       internal = true;
@@ -415,11 +415,7 @@ in
     _config = lib.mkOption {
       internal = true;
       readOnly = true;
-      default = lib.pipe config.datasets [
-        lib.attrValues
-        (filter (dataset: dataset.enable))
-        (map (dataset: dataset._config))
-      ];
+      default = map (dataset: dataset._config) (lib.attrValues config.datasets);
       description = "NixOS configuration";
     };
     _pkgs = lib.mkOption {
