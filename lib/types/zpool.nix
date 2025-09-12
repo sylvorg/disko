@@ -415,7 +415,11 @@ in
     _config = lib.mkOption {
       internal = true;
       readOnly = true;
-      default = map (dataset: dataset._config) (lib.attrValues config.datasets);
+      default = lib.pipe config.datasets [
+        lib.attrValues
+        (filter (dataset: dataset.enable))
+        (map (dataset: dataset._config))
+      ];
       description = "NixOS configuration";
     };
     _pkgs = lib.mkOption {
