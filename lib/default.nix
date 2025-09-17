@@ -112,6 +112,7 @@ let
         );
         default = null;
         description = "The type of device";
+        apply = type: if (extraArgs.parent.enable or true) then type else null;
       };
 
     /**
