@@ -631,7 +631,7 @@ let
     toplevel = lib.types.submodule (
       cfg:
       let
-        devices = {
+        devices = if cfg.config.enable then {
           inherit (cfg.config)
             bcachefs_filesystems
             disk
@@ -640,10 +640,14 @@ let
             lvm_vg
             nodev
             ;
-        };
+        } else { };
       in
       {
         options = {
+          enable = lib.mkOption {
+            type = lib.types.bool;
+            default = true;
+          };
           bcachefs_filesystems = lib.mkOption {
             type = lib.types.attrsOf diskoLib.types.bcachefs_filesystem;
             default = { };
@@ -653,6 +657,7 @@ let
             type = lib.types.attrsOf diskoLib.types.disk;
             default = { };
             description = "Block device";
+            apply = disk: if cfg.config.enable then disk else (lib.mapAttrs (n: v: v // { enable = false; }) disk);
           };
           mdadm = lib.mkOption {
             type = lib.types.attrsOf diskoLib.types.mdadm;
@@ -663,6 +668,7 @@ let
             type = lib.types.attrsOf diskoLib.types.zpool;
             default = { };
             description = "ZFS pool device";
+            apply = zpool: if cfg.config.enable then zpool else (lib.mapAttrs (n: v: v // { enable = false; }) zpool);
           };
           lvm_vg = lib.mkOption {
             type = lib.types.attrsOf diskoLib.types.lvm_vg;
