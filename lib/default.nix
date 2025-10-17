@@ -444,7 +444,7 @@ let
         internal = true;
         readOnly = true;
         type = lib.types.str;
-        default = ''
+        default = if (config.enable or true) then ''
           ( # ${config.type} ${
             lib.concatMapStringsSep " " (n: toString (config.${n} or "")) [
               "name"
@@ -458,7 +458,7 @@ let
             ${diskoLib.indent attrs.default}
             ${diskoLib.indent config.postCreateHook}
           )
-        '';
+        '' else "";
         description = "Creation script";
       };
 
@@ -475,14 +475,14 @@ let
         default = lib.mapAttrsRecursive (
           _name: value:
           if builtins.isString value then
-            ''
+            (if (config.enable or true) then ''
               (
                 ${diskoLib.indent (diskoLib.defineHookVariables { inherit options; })}
                 ${diskoLib.indent config.preMountHook}
                 ${diskoLib.indent value}
                 ${diskoLib.indent config.postMountHook}
               )
-            ''
+            '' else "")
           else
             value
         ) attrs.default;
@@ -502,14 +502,14 @@ let
         default = lib.mapAttrsRecursive (
           _name: value:
           if builtins.isString value then
-            ''
+            (if (config.enable or true) then ''
               (
                 ${diskoLib.indent (diskoLib.defineHookVariables { inherit options; })}
                 ${diskoLib.indent config.preUnmountHook}
                 ${diskoLib.indent value}
                 ${diskoLib.indent config.postUnmountHook}
               )
-            ''
+            '' else "")
           else
             value
         ) attrs.default;
